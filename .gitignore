@@ -1,0 +1,57 @@
+# ========================
+# SISTEMA OPERACIONAL
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# NODE / VUE
+# ========================
+vue_front_sos/node_modules/
+vue_front_sos/dist/
+vue_front_sos/.vite/
+vue_front_sos/*.tsbuildinfo
+vue_front_sos/npm-debug.log*
+vue_front_sos/yarn-debug.log*
+vue_front_sos/yarn-error.log*
+vue_front_sos/pnpm-debug.log*
+
+# ENV FRONT
+vue_front_sos/.env
+vue_front_sos/.env.local
+vue_front_sos/.env.*.local
+
+# ========================
+# LARAVEL / PHP
+# ========================
+laravel_backend_sos/vendor/
+laravel_backend_sos/node_modules/
+
+# ENV BACKEND
+laravel_backend_sos/.env
+
+# CACHE / LOGS
+laravel_backend_sos/storage/logs/*
+laravel_backend_sos/storage/framework/cache/*
+laravel_backend_sos/storage/framework/sessions/*
+laravel_backend_sos/storage/framework/views/*
+laravel_backend_sos/bootstrap/cache/*.php
+
+# EXCEÇÕES IMPORTANTES
+!laravel_backend_sos/storage/logs/.gitignore
+!laravel_backend_sos/storage/framework/cache/.gitignore
+!laravel_backend_sos/storage/framework/sessions/.gitignore
+!laravel_backend_sos/storage/framework/views/.gitignore
+!laravel_backend_sos/bootstrap/cache/.gitignore
+
+# DATABASE LOCAL
+laravel_backend_sos/database/*.sqlite
+
+# IDE
+.vscode/
+.idea/
+
+# TEMP
+*.tmp
+*.swp
+*.swo
