@@ -54,41 +54,49 @@
       <label class="label-sos">Descrição</label>
       <textarea v-model="form.description" class="input-sos min-h-28"></textarea>
     </div>
-
     <div class="md:col-span-2 flex justify-end gap-3">
       <button type="button" class="btn-secondary" @click="resetForm">Limpar</button>
-      <button class="btn-primary">Salvar produto</button>
+      <button class="btn-primary">{{ submitLabel }}</button>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import type { Category, Supplier } from '@/types';
 
-const props = defineProps<{
+type ProductFormPayload = {
+  name: string;
+  sku: string;
+  categoryId: string;
+  supplierId: string;
+  quantity: number;
+  minQuantity: number;
+  costPrice: number;
+  salePrice: number;
+  expirationDate?: string;
+  entryDate: string;
+  location: string;
+  description: string;
+};
+
+const props = withDefaults(defineProps<{
   categories: Category[];
   suppliers: Supplier[];
-}>();
+  initialValues?: Partial<ProductFormPayload>;
+  submitLabel?: string;
+  resetOnSubmit?: boolean;
+}>(), {
+  initialValues: () => ({}),
+  submitLabel: 'Salvar produto',
+  resetOnSubmit: true
+});
 
 const emit = defineEmits<{
-  (e: 'submit', payload: {
-    name: string;
-    sku: string;
-    categoryId: string;
-    supplierId: string;
-    quantity: number;
-    minQuantity: number;
-    costPrice: number;
-    salePrice: number;
-    expirationDate?: string;
-    entryDate: string;
-    location: string;
-    description: string;
-  }): void;
+  (e: 'submit', payload: ProductFormPayload): void;
 }>();
 
-const baseState = () => ({
+const getBaseState = () => ({
   name: '',
   sku: '',
   categoryId: props.categories[0]?.id ?? '',
@@ -103,11 +111,50 @@ const baseState = () => ({
   description: ''
 });
 
-const form = reactive(baseState());
+const form = reactive(getBaseState());
 
-const resetForm = () => Object.assign(form, baseState());
+const applyInitialValues = () => {
+  const base = getBaseState();
+  form.name = props.initialValues.name ?? base.name;
+  form.sku = props.initialValues.sku ?? base.sku;
+  form.categoryId = props.initialValues.categoryId ?? base.categoryId;
+  form.supplierId = props.initialValues.supplierId ?? base.supplierId;
+  form.quantity = Number(props.initialValues.quantity ?? base.quantity);
+  form.minQuantity = Number(props.initialValues.minQuantity ?? base.minQuantity);
+  form.costPrice = Number(props.initialValues.costPrice ?? base.costPrice);
+  form.salePrice = Number(props.initialValues.salePrice ?? base.salePrice);
+  form.expirationDate = props.initialValues.expirationDate ?? base.expirationDate;
+  form.entryDate = props.initialValues.entryDate ?? base.entryDate;
+  form.location = props.initialValues.location ?? base.location;
+  form.description = props.initialValues.description ?? base.description;
+};
+
+watch(() => [props.initialValues, props.categories, props.suppliers], () => applyInitialValues(), { immediate: true, deep: true });
+
+const resetForm = () => {
+  if (Object.keys(props.initialValues).length) {
+    applyInitialValues();
+    return;
+  }
+  Object.assign(form, getBaseState());
+};
+
 const submitForm = () => {
-  emit('submit', { ...form, expirationDate: form.expirationDate || undefined });
-  resetForm();
+  emit('submit', {
+    name: form.name,
+    sku: form.sku,
+    categoryId: form.categoryId,
+    supplierId: form.supplierId,
+    quantity: Number(form.quantity),
+    minQuantity: Number(form.minQuantity),
+    costPrice: Number(form.costPrice),
+    salePrice: Number(form.salePrice),
+    expirationDate: form.expirationDate || undefined,
+    entryDate: form.entryDate,
+    location: form.location,
+    description: form.description
+  });
+
+  if (props.resetOnSubmit) Object.assign(form, getBaseState());
 };
 </script>

@@ -1,71 +1,106 @@
 <template>
   <AppLayout title="Clientes" subtitle="Cadastro de clientes e compradores">
     <div class="grid gap-6 xl:grid-cols-[0.85fr,1.15fr]">
-      <SectionCard title="Novo cliente">
-        <SimpleEntityForm :fields="fields" @submit="onSubmit" />
-      </SectionCard>
+      <CustomerFormCard @submit="onCreate" />
 
       <SectionCard title="Base de clientes">
-        <div v-if="store.customersLoading" class="rounded-2xl border border-slate-100 p-5 text-sm text-slate-500">
-          Carregando clientes...
-        </div>
-
-        <div v-else-if="store.customersError" class="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-600">
-          {{ store.customersError }}
-        </div>
-
-        <div v-else-if="store.customers.length" class="grid gap-4 md:grid-cols-2">
-          <div
-            v-for="item in store.customers"
-            :key="item.id"
-            class="rounded-2xl border border-slate-100 p-5"
-          >
-            <h4 class="font-bold text-slate-900">{{ item.name }}</h4>
-            <p class="mt-2 text-sm text-slate-500">{{ item.email }}</p>
-            <p class="text-sm text-slate-500">{{ item.phone }}</p>
-          </div>
-        </div>
-
-        <div v-else class="rounded-2xl border border-slate-100 p-5 text-sm text-slate-500">
-          Nenhum cliente cadastrado.
-        </div>
+        <CustomerList :customers="store.customers" @edit="openEditModal" @remove="openDeleteModal" />
       </SectionCard>
     </div>
+
+    <CustomerEditModal :open="editingOpen" :customer="selectedCustomer" @close="closeEditModal" @submit="onEdit" />
+
+    <AppConfirmModal :open="deleteOpen" title="Excluir cliente" :message="deleteMessage" @cancel="closeDeleteModal" @confirm="onDelete" />
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import AppLayout from '@/components/layout/AppLayout.vue';
-import SectionCard from '@/components/common/SectionCard.vue';
-import SimpleEntityForm, { type FieldConfig } from '@/components/forms/SimpleEntityForm.vue';
-import { useInventoryStore } from '@/stores/inventory';
+  import { computed, onMounted, ref } from 'vue';
+  import AppLayout from '@/components/layout/AppLayout.vue';
+  import SectionCard from '@/components/common/SectionCard.vue';
+  import AppConfirmModal from '@/components/common/AppConfirmModal.vue';
+  import CustomerFormCard from '@/components/customers/CustomerFormCard.vue';
+  import CustomerList from '@/components/customers/CustomerList.vue';
+  import CustomerEditModal from '@/components/customers/CustomerEditModal.vue';
+  import { useInventoryStore } from '@/stores/inventory';
+  import type { Customer } from '@/types';
 
-const store = useInventoryStore();
+  const store = useInventoryStore();
 
-const fields: FieldConfig[] = [
-  { key: 'name', label: 'Nome' },
-  { key: 'email', label: 'E-mail', type: 'email' },
-  { key: 'phone', label: 'Telefone' }
-];
+  const editingOpen = ref(false);
+  const deleteOpen = ref(false);
+  const selectedCustomer = ref<Customer | null>(null);
+  const customerToDelete = ref<Customer | null>(null);
 
-onMounted(async () => {
-  try {
-    await store.loadCustomers();
-  } catch (error) {
-    console.error('Erro ao carregar clientes:', error);
-  }
-});
+  const deleteMessage = computed(() =>
+    customerToDelete.value
+      ? `Tem certeza que deseja excluir o cliente "${customerToDelete.value.name}"? Essa ação não poderá ser desfeita.`
+      : 'Tem certeza que deseja excluir este cliente?'
+  );
 
-const onSubmit = async (payload: Record<string, string>) => {
-  try {
-    await store.addCustomer({
-      name: payload.name,
-      email: payload.email,
-      phone: payload.phone
-    });
-  } catch (error) {
-    console.error('Erro ao cadastrar cliente:', error);
-  }
-};
+  const onCreate = async (payload: Record<string, string>) => {
+    try {
+      await store.addCustomer({
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone
+      });
+
+      await store.loadCustomers();
+    } catch (error) {
+      console.error('Erro ao cadastrar cliente:', error);
+    }
+  };
+
+  const openEditModal = (customer: Customer) => {
+    selectedCustomer.value = customer;
+    editingOpen.value = true;
+  };
+
+  const closeEditModal = () => {
+    editingOpen.value = false;
+    selectedCustomer.value = null;
+  };
+
+  const onEdit = async (payload: { name: string; email: string; phone: string }) => {
+    if (!selectedCustomer.value) return;
+
+    try {
+      await store.editCustomer(selectedCustomer.value.id, payload);
+      await store.loadCustomers();
+      closeEditModal();
+    } catch (error) {
+      console.error('Erro ao editar cliente:', error);
+    }
+  };
+
+  const openDeleteModal = (customer: Customer) => {
+    customerToDelete.value = customer;
+    deleteOpen.value = true;
+  };
+
+  const closeDeleteModal = () => {
+    deleteOpen.value = false;
+    customerToDelete.value = null;
+  };
+
+  const onDelete = async () => {
+    if (!customerToDelete.value) return;
+
+    try {
+      await store.removeCustomer(customerToDelete.value.id);
+      await store.loadCustomers();
+      closeDeleteModal();
+    } catch (error) {
+      console.error('Erro ao excluir cliente:', error);
+    }
+  };
+
+  onMounted(async () => {
+    try {
+      await store.loadCustomers();
+    } catch (error) {
+      console.error('Erro ao carregar clientes:', error);
+    }
+  });
 </script>
