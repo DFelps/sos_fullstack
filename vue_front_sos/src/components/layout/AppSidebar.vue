@@ -34,7 +34,7 @@ import {
 
 const items = [
   { to: '/', label: 'Dashboard', icon: HomeIcon },
-  { to: '/produtos', label: 'Cadastrar produtos', icon: ArchiveBoxIcon },
+  { to: '/produtos', label: 'Produtos', icon: ArchiveBoxIcon },
   { to: '/categorias', label: 'Categorias', icon: Squares2X2Icon },
   { to: '/fornecedores', label: 'Fornecedores', icon: TruckIcon },
   { to: '/clientes', label: 'Clientes', icon: UsersIcon },
