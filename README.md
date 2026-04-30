@@ -1,18 +1,22 @@
 # SOS Fullstack
 
-Releitura moderna do projeto **SOS - System Operation of Stock**, meu primeiro sistema desenvolvido originalmente em Java e agora reconstruído em arquitetura fullstack moderna.
+A modern fullstack inventory management system built with Vue 3, TypeScript, Laravel and MySQL.
 
-Este projeto foi recriado com foco em organização de código, componentização, interface profissional e integração completa entre frontend e backend.
+## Overview
 
-## Demonstração em vídeo
+SOS Fullstack is a modern reinterpretation of the original **SOS (System Operation of Stock)** project, initially developed in Java and rebuilt using a fullstack architecture.
+
+The project focuses on clean code organization, component-based frontend structure, a professional UI and full integration between frontend and backend.
+
+## Demo
 
 https://www.youtube.com/watch?v=fIMEck_o-yw
 
-## Objetivo do projeto
+## Purpose
 
-Criar um sistema de gerenciamento de estoque genérico e reutilizável para diferentes tipos de negócio, permitindo controle operacional completo de produtos, entradas, saídas, clientes, fornecedores e indicadores.
+To provide a generic and reusable inventory management system that can be adapted to different types of businesses, allowing full operational control over products, stock movements, clients, suppliers and key metrics.
 
-## Stack utilizada
+## Stack
 
 ### Frontend
 
@@ -27,89 +31,88 @@ Criar um sistema de gerenciamento de estoque genérico e reutilizável para dife
 
 - Laravel
 - PHP
-- API REST
+- REST API
 - Eloquent ORM
 - Migrations
 - Seeders
 - MySQL / SQLite
 
-## Estrutura do projeto
+## Project Structure
 
+```
 sos_fullstack/
-- vue_front_sos/
-- laravel_backend_sos/
+├── vue_front_sos/
+└── laravel_backend_sos/
+```
 
-## Funcionalidades implementadas
+## Features
 
 ### Dashboard
-- Visão geral da operação
-- Quantidade total em estoque
-- Valor total do inventário
-- Produtos críticos com paginação
-- Últimas movimentações
+- Operational overview
+- Total stock quantity
+- Total inventory value
+- Critical products with pagination
+- Latest stock movements
 
-### Produtos
-- Cadastro completo
-- Edição em modal
-- Exclusão com confirmação
-- Status de estoque
-- Paginação
+### Products
+- Full CRUD
+- Modal-based editing
+- Delete with confirmation
+- Stock status tracking
+- Pagination
 
-### Categorias
-- Cadastro
-- Edição
-- Exclusão
-- Paginação
+### Categories
+- Create, edit and delete
+- Pagination
 
-### Fornecedores
-- Cadastro
-- Edição
-- Exclusão
-- Paginação
+### Suppliers
+- Create, edit and delete
+- Pagination
 
-### Clientes
-- Cadastro
-- Edição
-- Exclusão
-- Paginação
+### Clients
+- Create, edit and delete
+- Pagination
 
-### Movimentações
-- Entrada
-- Saída
-- Ajuste manual
-- Histórico completo
-- Filtros
-- Busca
-- Paginação
+### Movements
+- Stock entry
+- Stock exit
+- Manual adjustments
+- Full history
+- Filters and search
+- Pagination
 
-### Relatórios
-- Produtos sem estoque
-- Baixo estoque
-- Produtos com validade
-- Cards resumidos
+### Reports
+- Out-of-stock products
+- Low stock alerts
+- Expiring products
+- Summary cards
 
-### Configurações
-- Preferências locais
-- Dados gerais
-- Stack do sistema
+### Settings
+- Local preferences
+- General data
+- System stack info
 
-## Como executar localmente
+## Running locally
 
 ### Frontend
 
+```bash
 cd vue_front_sos
 npm install
 npm run dev
+```
 
 ### Backend
 
+```bash
 cd laravel_backend_sos
 composer install
 cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 php artisan serve
+```
 
-## Autor
+## Author
 
-Desenvolvido por Daniel como evolução moderna do projeto original SOS.
+Developed by Daniel Siqueira as a modern evolution of the original SOS project.
